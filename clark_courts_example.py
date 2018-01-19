@@ -5,16 +5,20 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep, localtime
 import os
 
-(_,_,_,h,m,s,_,_,_) = localtime()
-stime = ''
-for x in [h,m,s]:
-    if x < 10:
-        x = '0' + str(x)
-    else:
-        x = str(x)
-    stime+=x
-    stime+=':'
-print('Start time:',stime[:-1])
+def time_now():
+    (_,_,_,h,m,s,_,_,_) = localtime()
+    time_now = ''
+    for x in [h,m,s]:
+        if x < 10:
+            x = '0' + str(x)
+        else:
+            x = str(x)
+        time_now+=x
+        time_now+=':'
+    time_now = time_now[:-1]
+    return time_now
+        
+print('Start time:',time_now())
     
 driver = webdriver.Chrome()
 
@@ -57,14 +61,10 @@ link.click()
 print('Downloading Bindover')
 elem = driver.find_element_by_link_text("Download Document")
 elem.click() #Popup dialog for downloading?
-(_,_,_,h,m,s,_,_,_) = localtime()
-etime = ''
-for x in [h,m,s]:
-    if x < 10:
-        x = '0' + str(x)
-    else:
-        x = str(x)
-    etime+=x
-    etime+=':'
-print('End time:',etime[:-1])
+elem = driver.find_element_by_link_text("Back")
+elem.click()
+elem = driver.find_element_by_id("tcControllerLink_0")
+elem.click()
+
+print('End time:',time_now())
 choice = input("Hit return to exit...")
