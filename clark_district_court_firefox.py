@@ -60,10 +60,10 @@ class Browser:
             
     def download(self, search_string):
         self.search(search_string)
-        sleep(5)
-        section = self.driver.find_element_by_id("divDocumentsInformation_body")
-        if section:
-            docs = lambda: section.find_elements_by_tag_name('p')
+        sleep(25)
+        section = lambda: self.driver.find_element_by_id("divDocumentsInformation_body")
+        if section():
+            docs = lambda: section().find_elements_by_tag_name('p')
             link = ''
             downloaded = False
             if docs():
