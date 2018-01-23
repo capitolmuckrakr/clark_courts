@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from time import sleep
-from os import getcwd
 import os
 
 
@@ -20,7 +19,7 @@ class Browser:
         fp = webdriver.FirefoxProfile()
         fp.set_preference("browser.download.folderList", 2)
         fp.set_preference("browser.download.manager.showWhenStarting", False)
-        fp.set_preference("browser.download.dir", getcwd())
+        fp.set_preference("browser.download.dir",'/home/ubuntu/data/Courts/')
         fp.set_preference("browser.helperApps.alwaysAsk.force", False)
         fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/tiff;application/pdf")
         self.driver = webdriver.Firefox(firefox_options=options,firefox_profile=fp)
@@ -60,7 +59,7 @@ class Browser:
             
     def download(self, search_string):
         self.search(search_string)
-        sleep(25)
+        sleep(5)
         section = lambda: self.driver.find_element_by_id("divDocumentsInformation_body")
         if section():
             docs = lambda: section().find_elements_by_tag_name('p')
