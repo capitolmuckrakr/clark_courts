@@ -9,9 +9,15 @@ import random, os, csv
 
 random.seed()
 
+HOME=os.path.expanduser('~')
+
+download_dir=HOME+'/data/Courts/'
+
+cases=download_dir+'case_numbers.csv'
+
 browser = Browser()
 
-with open('/home/ubuntu/data/Courts/case_numbers.csv') as f:
+with open(cases) as f:
     
     reader = csv.reader(f)
     
@@ -35,7 +41,7 @@ with open('/home/ubuntu/data/Courts/case_numbers.csv') as f:
             
             browser.download(case_number)
             
-            process = Popen(['tesseract',tiff_file,case_number,'-l','eng','-psm','1','pdf'],cwd='/home/ubuntu/data/Courts/',stdout=PIPE, stderr=PIPE)
+            process = Popen(['tesseract',tiff_file,case_number,'-l','eng','-psm','1','pdf'],cwd=download_dir,stdout=PIPE, stderr=PIPE)
             
             sleep(z)
             
