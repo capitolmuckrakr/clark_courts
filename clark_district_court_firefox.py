@@ -16,10 +16,12 @@ class Browser:
     def __init__(self):
         options = Options()
         options.add_argument("--headless")
+        HOME=os.path.expanduser('~')
+        download_dir=HOME+'/data/Courts/'
         fp = webdriver.FirefoxProfile()
         fp.set_preference("browser.download.folderList", 2)
         fp.set_preference("browser.download.manager.showWhenStarting", False)
-        fp.set_preference("browser.download.dir",'/home/ubuntu/data/Courts/')
+        fp.set_preference("browser.download.dir",download_dir)
         fp.set_preference("browser.helperApps.alwaysAsk.force", False)
         fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/tiff;application/pdf")
         self.driver = webdriver.Firefox(firefox_options=options,firefox_profile=fp)
