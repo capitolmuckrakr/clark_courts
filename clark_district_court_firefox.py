@@ -63,8 +63,8 @@ class Browser:
         self.search(search_string)
         sleep(5)
         section = lambda: self.driver.find_element_by_id("divDocumentsInformation_body")
-        section_fnd = section()
         sleep(5)
+        section_fnd = section()
         if section_fnd:
             docs = lambda: section().find_elements_by_tag_name('p')
             link = ''
