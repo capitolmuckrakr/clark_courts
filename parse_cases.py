@@ -27,7 +27,7 @@ with open(cases) as f:
         
         if len(row)>0:
             
-            x = random.randint(53,135)
+            x = random.randint(3,53)
             
             y = random.randint(1,10)
             
@@ -35,11 +35,7 @@ with open(cases) as f:
             
             case_number = row[0]
             
-            tiff_file = case_number + '.tif'
-            
             browser.download(case_number)
-            
-            process = Popen(['tesseract',tiff_file,case_number,'-l','eng','-psm','1','pdf'],cwd=download_dir,stdout=PIPE, stderr=PIPE)
             
             sleep(z)
             
