@@ -2,13 +2,13 @@
 from __future__ import print_function
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException,NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.options import Options
 from time import sleep
-import os
+import os, logging
 
 
 class Browser:
@@ -17,6 +17,15 @@ class Browser:
         options = Options()
         options.add_argument("--headless")
         HOME=os.path.expanduser('~')
+        log_dir = HOME + '/scripts/clark_courts/logs/'
+        log_file_name = log_dir + 'browser_errs.log'
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        self.logger = logging.getLogger('clark_courts_firefox_browser')
+        handler = logging.FileHandler(log_file_name)
+        handler.setLevel(logging.WARN)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
         download_dir=HOME+'/data/Courts/'
         fp = webdriver.FirefoxProfile()
         fp.set_preference("browser.download.folderList", 2)
@@ -25,21 +34,16 @@ class Browser:
         fp.set_preference("browser.helperApps.alwaysAsk.force", False)
         fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/tiff;application/pdf")
         self.driver = webdriver.Firefox(firefox_options=options,firefox_profile=fp)
-        self.wait = WebDriverWait(self.driver, 10)
+        self.driver.implicitly_wait(30)
         self.close = lambda: self.driver.close()
         self.login()
     
     def login(self):
-        self.driver.get("https://www.clarkcountycourts.us/Portal/")
-        sleep(5)
-        elem = self.driver.find_element_by_id("dropdownMenu1")
-        elem.click()
-        elem = self.driver.find_element_by_link_text("Sign In")
-        elem.click()
-        elem = self.driver.find_element_by_name("UserName")
+        self.driver.get("https://www.clarkcountycourts.us/Portal/Account/Login")
+        elem = self.driver.find_element_by_id("UserName")
         elem.clear()
         elem.send_keys(os.environ['CLARK_COURTS_USER'])
-        elem = self.driver.find_element_by_name("Password")
+        elem = self.driver.find_element_by_id("Password")
         elem.clear()
         elem.send_keys(os.environ['CLARK_COURTS_PASS'])
         elem = self.driver.find_element_by_class_name("Resizable")
@@ -60,18 +64,23 @@ class Browser:
             elem.click()
             
     def download(self, search_string):
+        self.logger.info('Downloading %s',search_string)
         self.search(search_string)
-        sleep(5)
-        section = lambda: self.driver.find_element_by_id("divDocumentsInformation_body")
-        if section():
-            docs = lambda: section().find_elements_by_tag_name('p')
+        section = self.driver.find_element_by_id("divDocumentsInformation_body")
+        if section:
+            self.logger.debug('Found section')
+            docs = section.find_elements_by_tag_name('p')
             link = ''
             downloaded = False
-            if docs():
-                for doc in docs():
-                    while not bool(downloaded):
+            if docs:
+                self.logger.debug('Found docs')
+                attempt = 1
+                while not bool(downloaded):
+                    for doc in docs:
                         try:
                             if 'Bindover' in doc.text:
+                                attempt-=1
+                                self.logger.debug('Found Bindover')
                                 link = doc.find_element_by_link_text("View Document")
                                 if link:
                                     link.click()
@@ -79,8 +88,24 @@ class Browser:
                                     if elem:
                                         elem.click()
                                         downloaded = True
-                                        sleep(2)
                                         break
-                        except StaleElementReferenceException:
-                            sleep(1)
-                            continue
+                            elif attempt < len(docs):
+                                sleep(3)
+                                self.logger.debug('Finished attempt #%s',attempt)
+                                self.logger.debug('Found document with title %s', doc.text)
+                                attempt+=1
+                                continue
+                            else:
+                                self.logger.warn('%s has no Bindover listed',search_string)
+                                downloaded = True
+                                break
+                        except (StaleElementReferenceException,NoSuchElementException) as e:
+                            self.logger.error('Exception triggered',exc_info=True)
+                            if attempt < 4:
+                                sleep(3)
+                                attempt+=1
+                                continue
+                            else:
+                                self.logger.warn('%s had problems listing documents',search_string)
+                                downloaded = True
+                                break
