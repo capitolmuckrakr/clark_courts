@@ -37,8 +37,6 @@ with open(cases) as f:
             
             tiff_file = case_number + '.tif'
             
-            print("downloading",case_number)
-            
             browser.download(case_number)
             
             process = Popen(['tesseract',tiff_file,case_number,'-l','eng','-psm','1','pdf'],cwd=download_dir,stdout=PIPE, stderr=PIPE)
