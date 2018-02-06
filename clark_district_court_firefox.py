@@ -68,12 +68,10 @@ class Browser:
     def download(self, search_string):
         self.logger.info('Downloading %s',search_string)
         self.search(search_string)
-        #section = self.driver.find_element_by_id("divDocumentsInformation_body")
         section = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID,"divDocumentsInformation_body")))
         if section:
             self.logger.debug('Found section')
             docs = section.find_elements_by_tag_name('p')
-            link = ''
             downloaded = False
             if docs:
                 self.logger.debug('Found docs')
@@ -84,12 +82,11 @@ class Browser:
                             if 'Bindover' in doc.text:
                                 attempt-=1
                                 self.logger.debug('Found Bindover')
-                                #link = doc.find_element_by_link_text("View Document")
                                 link = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"View Document")))
                                 if link:
-                                    link.click()
+                                    self.driver.execute_script("arguments[0].click();", link)
+                                    #link.click()
                                     sleep(5)
-                                    #elem = self.driver.find_element_by_link_text("Download Document")
                                     elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"Download Document")))
                                     sleep(4)
                                     if elem:
