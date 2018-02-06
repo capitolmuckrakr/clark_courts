@@ -61,7 +61,7 @@ class Browser:
         if elem:
             elem.click()
         sleep(5)
-        elem = self.driver.find_element_by_link_text(search_string)
+        elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,search_string)))
         if elem:
             elem.click()
             
