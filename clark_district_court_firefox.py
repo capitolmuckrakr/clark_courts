@@ -68,7 +68,8 @@ class Browser:
     def download(self, search_string):
         self.logger.info('Downloading %s',search_string)
         self.search(search_string)
-        section = self.driver.find_element_by_id("divDocumentsInformation_body")
+        #section = self.driver.find_element_by_id("divDocumentsInformation_body")
+        section = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID,"divDocumentsInformation_body")))
         if section:
             self.logger.debug('Found section')
             docs = section.find_elements_by_tag_name('p')
