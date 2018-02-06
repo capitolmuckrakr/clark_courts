@@ -17,7 +17,10 @@ class Browser:
         options = Options()
         options.add_argument("--headless")
         HOME=os.path.expanduser('~')
-        log_dir = HOME + '/scripts/clark_courts/logs/'
+        download_dir=HOME+'/data/Courts/'
+        log_dir = download_dir + 'logs/'
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
         log_file_name = log_dir + 'browser_errs.log'
         logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         self.logger = logging.getLogger('clark_courts_firefox_browser')
@@ -26,7 +29,6 @@ class Browser:
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
-        download_dir=HOME+'/data/Courts/'
         fp = webdriver.FirefoxProfile()
         fp.set_preference("browser.download.folderList", 2)
         fp.set_preference("browser.download.manager.showWhenStarting", False)
