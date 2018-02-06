@@ -102,7 +102,7 @@ class Browser:
                                 downloaded = True
                                 break
                         except (StaleElementReferenceException,NoSuchElementException) as e:
-                            self.logger.error('Exception triggered',exc_info=True)
+                            self.logger.error('Exception triggered while parsing case %s',search_string,exc_info=True)
                             if attempt < 4:
                                 sleep(3)
                                 attempt+=1
