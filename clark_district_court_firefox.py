@@ -83,11 +83,13 @@ class Browser:
                             if 'Bindover' in doc.text:
                                 attempt-=1
                                 self.logger.debug('Found Bindover')
-                                link = doc.find_element_by_link_text("View Document")
+                                #link = doc.find_element_by_link_text("View Document")
+                                link = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"View Document")))
                                 if link:
                                     link.click()
                                     sleep(5)
-                                    elem = self.driver.find_element_by_link_text("Download Document")
+                                    #elem = self.driver.find_element_by_link_text("Download Document")
+                                    elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"Download Document")))
                                     sleep(4)
                                     if elem:
                                         sleep(1)
