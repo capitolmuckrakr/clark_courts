@@ -1,8 +1,6 @@
 # coding: utf-8
 from clark_district_court_firefox import Browser
 
-from subprocess import Popen, PIPE
-
 from time import sleep
 
 import random, os, csv
