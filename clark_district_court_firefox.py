@@ -86,8 +86,11 @@ class Browser:
                                 link = doc.find_element_by_link_text("View Document")
                                 if link:
                                     link.click()
+                                    sleep(5)
                                     elem = self.driver.find_element_by_link_text("Download Document")
+                                    sleep(4)
                                     if elem:
+                                        sleep(1)
                                         elem.click()
                                         downloaded = True
                                         break
@@ -102,7 +105,7 @@ class Browser:
                                 downloaded = True
                                 break
                         except (StaleElementReferenceException,NoSuchElementException) as e:
-                            self.logger.error('Exception triggered while parsing case %s',search_string,exc_info=True)
+                            self.logger.warn('StaleElementReference or NoSuchElement Exception triggered while parsing case: %s',search_string)
                             if attempt < 4:
                                 sleep(3)
                                 attempt+=1
@@ -111,3 +114,5 @@ class Browser:
                                 self.logger.warn('%s had problems listing documents',search_string)
                                 downloaded = True
                                 break
+                        except Exception as e:
+                            self.logger.error('Unknown error downloading case %s',search_string,exc_info=True)
