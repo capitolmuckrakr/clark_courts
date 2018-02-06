@@ -2,7 +2,7 @@
 from __future__ import print_function
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import StaleElementReferenceException,NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException,NoSuchElementException,TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -52,18 +52,23 @@ class Browser:
         elem.click()
         
     def search(self, search_string):
-        self.driver.get("https://www.clarkcountycourts.us/Portal/Home/Dashboard/29")
-        elem = self.driver.find_element_by_id("caseCriteria_SearchCriteria")
-        if elem:
-            elem.clear()
-            elem.send_keys(search_string)
-        elem = self.driver.find_element_by_id("btnSSSubmit")
-        if elem:
-            elem.click()
-        sleep(5)
-        elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,search_string)))
-        if elem:
-            elem.click()
+        try:
+            self.driver.get("https://www.clarkcountycourts.us/Portal/Home/Dashboard/29")
+            elem = self.driver.find_element_by_id("caseCriteria_SearchCriteria")
+            if elem:
+                elem.clear()
+                elem.send_keys(search_string)
+            elem = self.driver.find_element_by_id("btnSSSubmit")
+            if elem:
+                elem.click()
+            sleep(5)
+            elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,search_string)))
+            if elem:
+                elem.click()
+        except TimeoutException:
+            self.logger.warn('TimeoutException triggered while searching for case: %s',search_string)
+        except Exception as e:
+            self.logger.error('Unknown error searching for case %s',search_string,exc_info=True)
             
     def download(self, search_string):
         self.logger.info('Downloading %s',search_string)
