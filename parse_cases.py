@@ -20,8 +20,6 @@ download_dir=HOME+'/data/Courts/'
 
 cases=download_dir+'case_numbers.csv'
 
-os.chdir(download_dir)
-
 most_recent_tiff=lambda x: sorted_dir(x)[0].split('.')[0]
 
 case_nums=[x.strip() for x in open(cases).readlines()[1:]]
