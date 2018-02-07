@@ -15,26 +15,36 @@ cases=download_dir+'case_numbers.csv'
 
 browser = Browser()
 
+limit=0 # don't download previously saved cases
+
 with open(cases) as f:
     
     reader = csv.reader(f)
     
-    next(reader, None) # skip header
+    #next(reader, None) # skip header
     
     for row in reader:
-        
-        if len(row)>0:
+
+        if limit<268:
+
+            limit+=1
+
+            continue
+
+        else:
+
+            if len(row)>0:
             
-            x = random.randint(3,53)
+                x = random.randint(3,53)
             
-            y = random.randint(1,10)
+                y = random.randint(1,10)
             
-            z = x+y
+                z = x+y
             
-            case_number = row[0]
+                case_number = row[0]
             
-            browser.download(case_number)
+                browser.download(case_number)
             
-            sleep(z)
+                sleep(z)
             
 browser.close()
