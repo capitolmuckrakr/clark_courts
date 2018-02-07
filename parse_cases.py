@@ -5,6 +5,13 @@ from time import sleep
 
 import random, os, csv
 
+def sorted_dir(folder):
+    def getmtime(name):
+        path = os.path.join(folder, name)
+        return os.path.getmtime(path)
+
+    return sorted(os.listdir(folder), key=getmtime, reverse=True)
+
 random.seed()
 
 HOME=os.path.expanduser('~')
@@ -13,19 +20,25 @@ download_dir=HOME+'/data/Courts/'
 
 cases=download_dir+'case_numbers.csv'
 
-browser = Browser()
+os.chdir(download_dir)
+
+most_recent_tiff=lambda x: sorted_dir(x)[0].split('.')[0]
+
+case_nums=[x.strip() for x in open(cases).readlines()[1:]]
 
 limit=0 # don't download previously saved cases
+
+browser = Browser()
+
+most_recent_index=case_nums.index(most_recent_tiff(download_dir))
 
 with open(cases) as f:
     
     reader = csv.reader(f)
-    
-    #next(reader, None) # skip header
-    
-    for row in reader:
 
-        if limit<268:
+    for row in reader:
+        
+        if limit<=most_recent_index:
 
             limit+=1
 
@@ -44,7 +57,7 @@ with open(cases) as f:
                 case_number = row[0]
             
                 browser.download(case_number)
-            
+
                 sleep(z)
             
 browser.close()
