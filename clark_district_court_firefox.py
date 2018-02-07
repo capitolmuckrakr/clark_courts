@@ -73,51 +73,56 @@ class Browser:
     def download(self, search_string):
         self.logger.info('Downloading %s',search_string)
         self.search(search_string)
-        section = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID,"divDocumentsInformation_body")))
-        if section:
-            self.logger.debug('Found section')
-            docs = section.find_elements_by_tag_name('p')
-            downloaded = False
-            if docs:
-                self.logger.debug('Found docs')
-                attempt = 1
-                while not bool(downloaded):
-                    for doc in docs:
-                        try:
-                            if 'Bindover' in doc.text:
-                                attempt-=1
-                                self.logger.debug('Found Bindover')
-                                link = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"View Document")))
-                                if link:
-                                    self.driver.execute_script("arguments[0].click();", link)
-                                    #link.click()
-                                    sleep(5)
-                                    elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"Download Document")))
-                                    sleep(4)
-                                    if elem:
-                                        sleep(1)
-                                        elem.click()
-                                        downloaded = True
-                                        break
-                            elif attempt < len(docs):
-                                sleep(3)
-                                self.logger.debug('Finished attempt #%s',attempt)
-                                self.logger.debug('Found document with title %s', doc.text)
-                                attempt+=1
-                                continue
-                            else:
-                                self.logger.warn('%s has no Bindover listed',search_string)
-                                downloaded = True
-                                break
-                        except (StaleElementReferenceException,NoSuchElementException) as e:
-                            self.logger.warn('StaleElementReference or NoSuchElement Exception triggered while parsing case: %s',search_string)
-                            if attempt < 4:
-                                sleep(3)
-                                attempt+=1
-                                continue
-                            else:
-                                self.logger.warn('%s had problems listing documents',search_string)
-                                downloaded = True
-                                break
-                        except Exception as e:
-                            self.logger.error('Unknown error downloading case %s',search_string,exc_info=True)
+        try:
+            section = WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.ID,"divDocumentsInformation_body")))
+            if section:
+                self.logger.debug('Found section')
+                docs = section.find_elements_by_tag_name('p')
+                downloaded = False
+                if docs:
+                    self.logger.debug('Found docs')
+                    attempt = 1
+                    while not bool(downloaded):
+                        for doc in docs:
+                            try:
+                                if 'Bindover' in doc.text:
+                                    attempt-=1
+                                    self.logger.debug('Found Bindover')
+                                    link = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"View Document")))
+                                    if link:
+                                        self.driver.execute_script("arguments[0].click();", link)
+                                        #link.click()
+                                        sleep(5)
+                                        elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"Download Document")))
+                                        sleep(4)
+                                        if elem:
+                                            sleep(1)
+                                            elem.click()
+                                            downloaded = True
+                                            break
+                                elif attempt < len(docs):
+                                    sleep(3)
+                                    self.logger.debug('Finished attempt #%s',attempt)
+                                    self.logger.debug('Found document with title %s', doc.text)
+                                    attempt+=1
+                                    continue
+                                else:
+                                    self.logger.warn('%s has no Bindover listed',search_string)
+                                    downloaded = True
+                                    break
+                            except (StaleElementReferenceException,NoSuchElementException) as e:
+                                self.logger.warn('StaleElementReference or NoSuchElement Exception triggered while parsing case: %s',search_string)
+                                if attempt < 4:
+                                    sleep(3)
+                                    attempt+=1
+                                    continue
+                                else:
+                                    self.logger.warn('%s had problems listing documents',search_string)
+                                    downloaded = True
+                                    break
+                            except Exception as e:
+                                self.logger.error('Unknown error downloading case %s',search_string,exc_info=True)
+        except TimeoutException:
+            self.logger.warn('TimeoutException triggered while downlaoding case: %s',search_string)
+        except Exception as e:
+            self.logger.error('Unknown error downlaoding case %s',search_string,exc_info=True)
