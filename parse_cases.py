@@ -20,7 +20,7 @@ HOME=os.path.expanduser('~')
 
 download_dir=HOME+'/data/Courts/'
 
-cases=download_dir+'case_numbers.csv'
+cases=download_dir+'case_numbers_second_pass.csv'
 
 most_recent_tiff=lambda x: sorted_dir(x)[0].split('.')[0]
 
