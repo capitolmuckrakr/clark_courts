@@ -100,6 +100,21 @@ class Browser:
                                             elem.click()
                                             downloaded = True
                                             break
+                                elif 'Reporters Transcript' in doc.text:
+                                    attempt-=1
+                                    self.logger.debug('Found Reporters Transcript')
+                                    link = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"View Document")))
+                                    if link:
+                                        self.driver.execute_script("arguments[0].click();", link)
+                                        #link.click()
+                                        sleep(5)
+                                        elem = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.LINK_TEXT,"Download Document")))
+                                        sleep(4)
+                                        if elem:
+                                            sleep(1)
+                                            elem.click()
+                                            downloaded = True
+                                            break
                                 elif attempt < len(docs):
                                     sleep(3)
                                     self.logger.debug('Finished attempt #%s',attempt)
@@ -107,7 +122,7 @@ class Browser:
                                     attempt+=1
                                     continue
                                 else:
-                                    self.logger.warn('%s has no Bindover listed',search_string)
+                                    self.logger.warn('%s has no Bindover or Reporters Transcript listed',search_string)
                                     downloaded = True
                                     break
                             except (StaleElementReferenceException,NoSuchElementException) as e:
