@@ -36,7 +36,14 @@ while True:
     
     browser = Browser()
     
-    most_recent_index=case_nums.index(most_recent_tiff(download_dir))
+    try:
+        
+        most_recent_index=case_nums.index(most_recent_tiff(download_dir))
+        
+    except ValueError:
+        
+        most_recent_index=0
+        
     
     with open(cases) as f:
         
