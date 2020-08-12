@@ -35,7 +35,7 @@ class Browser:
         fp.set_preference("browser.download.dir",download_dir)
         fp.set_preference("browser.helperApps.alwaysAsk.force", False)
         fp.set_preference("browser.helperApps.neverAsk.saveToDisk", "image/tiff;application/pdf")
-        self.driver = webdriver.Firefox(firefox_options=options,firefox_profile=fp)
+        self.driver = webdriver.Firefox(options=options,firefox_profile=fp)
         self.driver.implicitly_wait(30)
         self.close = lambda: self.driver.close()
         self.login()
