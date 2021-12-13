@@ -65,7 +65,7 @@ jupyter-core==4.3.0
 lazy-object-proxy==1.2.2
 llvmlite==0.18.0
 locket==0.2.0
-lxml==4.1.1
+lxml==4.6.5
 MarkupSafe==0.23
 matplotlib==2.0.2
 maya==0.3.3
