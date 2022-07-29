@@ -69,7 +69,7 @@ lxml==4.6.5
 MarkupSafe==0.23
 matplotlib==2.0.2
 maya==0.3.3
-mistune==0.8.1
+mistune==2.0.3
 mpmath==0.19
 msgpack-python==0.4.8
 multipledispatch==0.4.9
